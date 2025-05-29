@@ -1,8 +1,7 @@
 import './App.css'
 import { useState, useEffect } from 'react';
 import { createClient } from "@supabase/supabase-js";
-
-
+import { MapContainer, TileLayer, useMap, Marker, Popup } from "react-leaflet";
 // TODO: creare un layer a parte
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL 
 const supabaseKey = import.meta.env.VITE_SUPABASE_KEY
@@ -42,23 +41,40 @@ function App() {
      }, [properties])
   
   return (
-    <div>
-      <p>Realty</p>
-      <ul>
-        {
-          properties.map(property => {
+    <>
+      <MapContainer
+        center={[44.493936, 11.342744]}
+        zoom={13}
+        scrollWheelZoom={false}
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <Marker position={[44.494246, 11.338522]}>
+          <Popup>
+            A pretty CSS3 popup. <br /> Easily customizable.
+          </Popup>
+        </Marker>
+      </MapContainer>
+      <div>
+        <p>Realty</p>
+        <ul>
+          {properties.map((property) => {
             return (
-            <li>
-              <p>{property.id}</p>
-              <p>{property.city.city_name}</p>
-              <a href={property.url} target='__blank'>Link</a>
-            </li>
-          )
-          })
-        }
-      </ul>
-    </div>
-  )
+              <li>
+                <p>{property.id}</p>
+                <p>{property.city.city_name}</p>
+                <a href={property.url} target="__blank">
+                  Link
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </>
+  );
 }
 
 export default App
