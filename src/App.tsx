@@ -1,7 +1,9 @@
 import './App.css'
 import { useState, useEffect } from 'react';
 import { createClient } from "@supabase/supabase-js";
-import { MapContainer, TileLayer, useMap, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { Card, CardContent } from "@/components/ui/card";
+
 // TODO: creare un layer a parte
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL 
 const supabaseKey = import.meta.env.VITE_SUPABASE_KEY
@@ -41,40 +43,53 @@ function App() {
      }, [properties])
   
   return (
-    <>
-      <MapContainer
-        center={[44.493936, 11.342744]}
-        zoom={13}
-        scrollWheelZoom={false}
-      >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <Marker position={[44.494246, 11.338522]}>
-          <Popup>
-            A pretty CSS3 popup. <br /> Easily customizable.
-          </Popup>
-        </Marker>
-      </MapContainer>
-      <div>
-        <p>Realty</p>
-        <ul>
-          {properties.map((property) => {
-            return (
-              <li>
-                <p>{property.id}</p>
-                <p>{property.city.city_name}</p>
-                <a href={property.url} target="__blank">
+    <div className="min-h-screen bg-gray-50">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Mappa */}
+      <Card className="mb-8">
+        <CardContent>
+            <MapContainer
+              center={[44.493936, 11.342744]}
+              zoom={13}
+              scrollWheelZoom={false}
+              className="h-full w-full" 
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              <Marker position={[44.494246, 11.338522]}>
+                <Popup>
+                  A pretty CSS3 popup. <br /> Easily customizable.
+                </Popup>
+              </Marker>
+            </MapContainer>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent>
+          <h2 className="text-xl font-bold mb-4">Realty</h2>
+          <ul className="space-y-2">
+            {properties.map((property) => (
+              <li key={property.id} className="border-b pb-2">
+                <p>ID: {property.id}</p>
+                <p>City: {property.city.city_name}</p>
+                <a 
+                  href={property.url} 
+                  target="_blank"
+                  className="text-blue-600 hover:underline"
+                >
                   Link
                 </a>
               </li>
-            );
-          })}
-        </ul>
+            ))}
+          </ul>
+        </CardContent>
+      </Card>
       </div>
-    </>
-  );
+  </div>
+);
 }
 
 export default App
