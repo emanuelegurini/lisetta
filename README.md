@@ -1,9 +1,28 @@
-# lisetta
+# Lisetta
 
-Un'idea per tenere in un unico posto gli immobili che si stanno tenendo sotto controllo.
+Lisetta è un progetto che nasce da un bisogno.
 
-Da affittare? Da comprare? BOH!
-Fai tu!
+Sto cercando una casa da comprare a Bologna.
+
+Sto consultando molti portali e alcuni di questi, come immobiliare.it, sono fatti davvero bene. Tuttavia, tenere sotto controllo i preferiti, tra tutte le app, è un'operazione abbastanza antipatica, soprattutto se cercare casa non è l'unica attività della giornata.
+
+Sto tirando su Lisetta per risolvere questo - mio - problema. 
+
+In Lisetta: 
+- raccolgo gli immobili che trovo interessanti nei vari portali;
+- posso visualizzare gli sulla mappa;
+- tengo sotto controllo i link degli annunci. Se uno di questi viene tolto o aggiornato, vengo avvisato;
+- posso avere sempre sotto controllo gli immobili in base a dei criteri di scelta che sono io stesso a stabilire. 
+
+Attenzione: alcune feature devono essere ancora implementate.
+
+## TODO
+[ ] lavorare sulla tipizzazione
+[ ] implementare registrazione, autenticazione e autorizzazione
+[ ] implementare pagina profilo
+[ ] implementare criteri di scelta personalizzati
+[ ] implementare lambda
+
 
 ## Workflow degli appuntamenti
 
@@ -14,25 +33,4 @@ Fai tu!
 5. visited → visitato fisicamente
 6. interested/rejected → decisione finale
 
-App => property_portal_id
-Via => address [x]
-Visitato => viewing_status [x]
-Agenzia => real_estate_agencies
-metri_quadrati => surface area [x]
-Euro al metro quadro => è sul portale [x]
-Costo => price [x]
-Piano => floor [x]
-Ascensore => elevator [x]
-APE => energy_classes
-Balcone => balcony [x]
-Giardino => garden [x]
-Spese condominio => condo_fees
-Garage => garage [x]
-Posto auto => car_park [x]
-Cantina => basement [x]
-Cantina Ciclabile => cicle basement [x]
-Orientamento
-Riscaldamento => heating_system [x]
-Climatizzazione => air_conditioning [x]
-Da ristrutturare => needs_renovation [x]
-Note [x]
+
