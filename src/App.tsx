@@ -2,34 +2,30 @@ import './App.css'
 import { useState, useEffect } from 'react';
 import { createClient } from "@supabase/supabase-js";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ExternalLink, MapPin } from "lucide-react";
+
 
 import {
   NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
-  NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
 
 import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 import {
   Table,
@@ -41,7 +37,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-export const getViewingStatusIcon = (status) => {
+type ViewingStatus =
+  | "new"
+  | "viewed"
+  | "appointment_requested"
+  | "appointment_confirmed"
+  | "visited"
+  | "interested"
+  | "rejected"
+  | "archived";
+
+export const getViewingStatusIcon = (status: ViewingStatus): string => {
   const iconMap = {
     new: "🆕",
     viewed: "👁️",
@@ -123,65 +129,118 @@ const get_properties = async () => {
 }
 
 
-const getAPEColor = (ape) => {
-  const colors = {
-    A: "bg-green-500",
-    B: "bg-green-400",
-    C: "bg-yellow-500",
-    D: "bg-yellow-600",
-    E: "bg-orange-500",
-    F: "bg-red-500",
-    G: "bg-red-600",
+const getAPEColor = (ape: string): string => {
+  const colors: { [key: string]: string } = {
+    A4: "bg-green-700", // Verde scuro
+    A3: "bg-green-600", // Verde
+    A2: "bg-green-500", // Verde chiaro
+    A1: "bg-green-400", // Verde molto chiaro
+    B: "bg-yellow-500", // Giallo
+    C: "bg-orange-500", // Arancione
+    D: "bg-red-500", // Rosso
+    E: "bg-red-700", // Rosso scuro
+    F: "bg-red-800", // Rosso intenso
+    G: "bg-red-900", // Rosso scuro (peggiore)
   };
-  return colors[ape] || "bg-gray-500";
+  return colors[ape.toUpperCase()] || "bg-gray-500";
 };
 
-// Componente Popup per una singola proprietà
+
+// Componente PropertyPopup aggiornato
 const PropertyPopup = ({ property }) => {
+  if (!property) return null;
+
   // Filtro solo le features disponibili
   const availableFeatures = [];
-  if (property.balcony) availableFeatures.push("Balcone");
-  if (property.parking) availableFeatures.push("Parcheggio");
-  if (property.garage) availableFeatures.push("Garage");
-  if (property.bikeCellar) availableFeatures.push("Cantina Ciclabile");
+  if (property.balcony) availableFeatures.push({ label: "Balcone", icon: "🏖️" });
+  if (property.car_park) availableFeatures.push({ label: "Parcheggio", icon: "🅿️" });
+  if (property.garage) availableFeatures.push({ label: "Garage", icon: "🏠" });
+  if (property.cycle_basement) availableFeatures.push({ label: "Cantina Ciclabile", icon: "🚲" });
+  if (property.elevator) availableFeatures.push({ label: "Ascensore", icon: "🛗" });
+  if (property.air_conditioning) availableFeatures.push({ label: "Climatizzazione", icon: "❄️" });
+  if (property.garden) availableFeatures.push({ label: "Giardino", icon: "🌳" });
 
   return (
-    <Card className="w-72 border-none shadow-none">
-      <CardHeader className="">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-xl font-bold text-blue-600">
-            {property.price}
-          </CardTitle>
-          <Badge
-            className={`text-white font-semibold ${getAPEColor(property.ape)}`}
-          >
-            APE {property.ape}
-          </Badge>
-        </div>
-        <p className="text-sm text-gray-600 font-medium">{property.sqm} mq</p>
-      </CardHeader>
-
-      <CardContent className="space-y-2">
-        {availableFeatures.length > 0 && (
-          <div className="flex flex-wrap gap-1">
-            {availableFeatures.map((feature, index) => (
-              <div
-                key={index}
-                className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs"
-              >
-                {feature}
+    <Card className="w-80 border-none shadow-none">
+      <CardContent className="p-0">
+        {/* Header con prezzo e indirizzo */}
+        <div className="p-4 border-b">
+          <div className="flex justify-between items-start mb-2">
+            <div className="flex-1">
+              <div className="text-2xl font-bold text-blue-900 mb-1">
+                €{property.price?.toLocaleString('it-IT') || 'N/A'}
               </div>
-            ))}
+              <div className="flex items-center text-sm text-gray-600 mb-1">
+                <MapPin className="w-4 h-4 mr-1" />
+                <span className="font-medium">{property.address}</span>
+              </div>
+              <div className="text-sm text-gray-500">
+                {property.city?.city_name}, {property.region?.region_name}
+              </div>
+            </div>
+            {property.energy_classes?.energy_class && (
+              <Badge className={`${getAPEColor(property.energy_classes.energy_class)} text-white font-bold`}>
+                {property.energy_classes.energy_class}
+              </Badge>
+            )}
+          </div>
+        </div>
+
+        {/* Features */}
+        {availableFeatures.length > 0 && (
+          <div className="p-4 border-b">
+            <div className="text-sm font-medium mb-3 text-gray-700">Caratteristiche</div>
+            <div className="flex flex-wrap gap-2">
+              {availableFeatures.slice(0, 6).map((feature, index) => (
+                <Badge key={index} variant="secondary" className="text-xs">
+                  <span className="mr-1">{feature.icon}</span>
+                  {feature.label}
+                </Badge>
+              ))}
+              {availableFeatures.length > 6 && (
+                <Badge variant="outline" className="text-xs">
+                  +{availableFeatures.length - 6} altro
+                </Badge>
+              )}
+            </div>
           </div>
         )}
 
-        <Button size="sm" className="w-full">
-          Vedi Dettagli
-        </Button>
+        {/* Pulsanti azione */}
+        <div className="p-4 space-y-2">
+          <Button 
+            className="w-full" 
+            onClick={() => window.open(property.url, '_blank')}
+            disabled={!property.url}
+          >
+            <ExternalLink className="w-4 h-4 mr-2" />
+            Visualizza Annuncio Completo
+          </Button>
+        </div>
+
+        {/* Status e note */}
+        {(property.viewing_statuses?.viewing_status || property.note) && (
+          <div className="p-4 bg-gray-50 border-t">
+            {property.viewing_statuses?.viewing_status && (
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-sm text-gray-600">Status:</span>
+                <Badge variant="outline" className="text-xs">
+                  {property.viewing_statuses.viewing_status}
+                </Badge>
+              </div>
+            )}
+            {property.note && (
+              <div className="text-xs text-gray-600">
+                <span className="font-medium">Note:</span> {property.note}
+              </div>
+            )}
+          </div>
+        )}
       </CardContent>
     </Card>
   );
 };
+
 
 
 function App() {
@@ -226,14 +285,6 @@ function App() {
                   Home
                 </NavigationMenuLink>
               </NavigationMenuItem>
-              {/*               <NavigationMenuItem>
-                <NavigationMenuLink
-                  href="/account"
-                  className="text-gray-700 hover:font-bold transition-colors duration-300"
-                >
-                  Account
-                </NavigationMenuLink>
-              </NavigationMenuItem> */}
             </NavigationMenuList>
           </NavigationMenu>
           <div className="flex items-center space-x-2">
@@ -265,7 +316,7 @@ function App() {
                   center={[44.493936, 11.342744]}
                   zoom={13}
                   scrollWheelZoom={false}
-                  className="h-full w-full"
+                  className="h-full w-full map-container-custom-z-index"
                 >
                   <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -279,17 +330,7 @@ function App() {
                     >
                       <Popup>
                         <PropertyPopup
-                          property={{
-                            id: 3,
-                            price: "€280.000",
-                            sqm: 95,
-                            ape: "A",
-                            bikeCellar: true,
-                            balcony: false,
-                            parking: true,
-                            garage: true,
-                            address: "Via Dante 22, Firenze",
-                          }}
+                          property={property}
                         />
                       </Popup>
                     </Marker>
@@ -323,7 +364,6 @@ function App() {
                     <TableHead>Giardino</TableHead>
                     <TableHead>Riscaldamento</TableHead>
                     <TableHead>Climatizzazione</TableHead>
-                    {/* <TableHead>Orientamento</TableHead> */}
                     <TableHead>Cantina</TableHead>
                     <TableHead>Cantina Ciclabile</TableHead>
                     <TableHead>Da Ristrutturare</TableHead>
@@ -398,7 +438,6 @@ function App() {
                       <TableCell>
                         {property.air_conditioning ? "✓" : "✗"}
                       </TableCell>
-                      {/* <TableCell>Sud</TableCell> */}
                       <TableCell>{property.basement ? "✓" : "✗"}</TableCell>
                       <TableCell>
                         {property.cycle_basement ? "✓" : "✗"}
@@ -407,44 +446,21 @@ function App() {
                         {property.needs_renovation ? "✓" : "✗"}
                       </TableCell>
                       <TableCell>
-                        {/** Drawer */}
-
-                        <Drawer>
-                          <DrawerTrigger asChild>
-                            <Button variant="outline">Open Drawer</Button>
-                          </DrawerTrigger>
-                          <DrawerContent className="z-[1000]">
-                            <div className="mx-auto w-full max-w-sm">
-                              <DrawerHeader>
-                                <DrawerTitle>Move Goal</DrawerTitle>
-                                <DrawerDescription>
-                                  Set your daily activity goal.
-                                </DrawerDescription>
-                              </DrawerHeader>
-                              <div className="p-4 pb-0">
-                                <div className="flex items-center justify-center space-x-2">
-                                  <div className="flex-1 text-center">
-                                    <div className="text-7xl font-bold tracking-tighter">
-                                      testo
-                                    </div>
-                                    <div className="text-muted-foreground text-[0.70rem] uppercase">
-                                      Calories/day
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="mt-3 h-[120px]">contenuto</div>
-                              </div>
-                              <DrawerFooter>
-                                <Button>Submit</Button>
-                                <DrawerClose asChild>
-                                  <Button variant="outline">Cancel</Button>
-                                </DrawerClose>
-                              </DrawerFooter>
-                            </div>
-                          </DrawerContent>
-                        </Drawer>
-
-                        {/** End - Drawer */}
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button variant="default" size="sm">
+                              Note
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="z-[1000]">
+                            <DialogHeader>
+                              <DialogTitle>Note</DialogTitle>
+                              <DialogDescription>
+                                {property.note}
+                              </DialogDescription>
+                            </DialogHeader>
+                          </DialogContent>
+                        </Dialog>
                       </TableCell>
                     </TableRow>
                   ))}
