@@ -8,7 +8,7 @@ import {
 
 const Header = () => {
   return (
-    <div className="pb-8 pt-4 flex justify-between items-center mb-8">
+    <div className="pt-4 flex justify-between items-center mb-8">
       <NavigationMenu>
         <NavigationMenuList className="flex space-x-4">
           <NavigationMenuItem>

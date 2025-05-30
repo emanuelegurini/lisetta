@@ -16,7 +16,7 @@ export const createRoutes = () => ({
       key: "Home",
       component: (props) => (
         <Route
-          path="/"
+          path="/*"
           key="Homepage"
           element={
             <LazyComponent
