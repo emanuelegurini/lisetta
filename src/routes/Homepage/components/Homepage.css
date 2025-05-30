@@ -1,0 +1,82 @@
+.leaflet-container {   width: 100%;   height: 100vh; }
+.map-container-custom-z-index {z-index: 40;}
+
+
+/* Stili per il popup della mappa */
+.custom-popup .leaflet-popup-content-wrapper {
+  padding: 0;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+
+.custom-popup .leaflet-popup-content {
+  margin: 0;
+  width: auto !important;
+  max-width: 320px;
+}
+
+.custom-popup .leaflet-popup-tip {
+  background: white;
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4);
+}
+
+/* Z-index per la mappa */
+.map-container-custom-z-index {
+  z-index: 1;
+}
+
+.map-container-custom-z-index .leaflet-popup-pane {
+  z-index: 1000;
+}
+
+/* Utility per limitare le righe di testo */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Miglioramenti per la responsività */
+@media (max-width: 768px) {
+  .custom-popup .leaflet-popup-content {
+    max-width: 280px;
+  }
+}
+
+/* Animazioni per gli hover sui badges */
+.transition-shadow {
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+/* Stili per i marker personalizzati (opzionale) */
+.custom-marker {
+  background-color: #3b82f6;
+  border: 3px solid white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.custom-marker:hover {
+  transform: scale(1.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+/* Stili per l'anteprima URL */
+.url-preview-loading {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
