@@ -37,7 +37,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           {authRoutesList.routes.map(({ component }) => component())}
-          </Routes>
+        </Routes>
       </BrowserRouter>
     );
   }
