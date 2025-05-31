@@ -2,28 +2,21 @@ import { LazyComponent } from "@/hoc/LazyComponent";
 import { lazy } from "react";
 import { Route } from "react-router";
 
-const Homepage = lazy(
-  () => import("./Homepage")
-);
+const Homepage = lazy(() => import("./Homepage"));
 
 export const Components = {
   Homepage,
 };
 
-export const createRoutes = () => ({
+export const createAuthRoutes = () => ({
   routes: [
     {
       key: "Home",
       component: (props) => (
         <Route
-          path="/*"
+          path="/"
           key="Homepage"
-          element={
-            <LazyComponent
-              componentName="Homepage"
-              {...props}
-            />
-          }
+          element={<LazyComponent componentName="Homepage" {...props} />}
         />
       ),
     },

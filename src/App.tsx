@@ -2,7 +2,7 @@ import './App.css'
 import { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { BrowserRouter, Routes } from 'react-router';
-import { createRoutes } from './routes/routes';
+import { createAuthRoutes } from './routes/routes';
 
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
@@ -28,17 +28,20 @@ function App() {
     return () => subscription.unsubscribe();
   }, []);
 
-  const routesList = createRoutes()
+  const authRoutesList = createAuthRoutes()
 
   if (!session) {
     return <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} />;
   } else {
     return (
       <BrowserRouter>
-        <Routes>{routesList.routes.map(({ component }) => component())}</Routes>
+        <Routes>
+          {authRoutesList.routes.map(({ component }) => component())}
+          </Routes>
       </BrowserRouter>
     );
   }
+
 }
 
 export default App
