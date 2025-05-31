@@ -1,11 +1,8 @@
 import './App.css'
-import { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
-import { BrowserRouter, Routes } from 'react-router';
-import { createAuthRoutes } from './routes/routes';
-
-import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
+import { BrowserRouter, Navigate, Routes, Route} from 'react-router';
+import PrivateRoute from './components/PrivateRoute';
+import { authRoutes } from './pages/routes';
 
 // TODO: creare un layer a parte
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL 
@@ -14,34 +11,22 @@ const supabaseKey = import.meta.env.VITE_SUPABASE_KEY
 export const supabase =  createClient(supabaseUrl, supabaseKey)
 
 function App() {
-  const [session, setSession] = useState(null);
+  return (
+    <BrowserRouter>
+      <Routes>
+        {/* Route pubbliche */}
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-    return () => subscription.unsubscribe();
-  }, []);
+        {/* Route autenticate */}
+        <Route element={<PrivateRoute />}>
+          {authRoutes.map((route) => (
+            <Route key={route.path} path={route.path} element={route.element} />
+          ))}
+        </Route>
 
-  const authRoutesList = createAuthRoutes()
-
-  if (!session) {
-    return <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} />;
-  } else {
-    return (
-      <BrowserRouter>
-        <Routes>
-          {authRoutesList.routes.map(({ component }) => component())}
-        </Routes>
-      </BrowserRouter>
-    );
-  }
-
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 export default App

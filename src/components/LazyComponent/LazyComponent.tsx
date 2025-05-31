@@ -1,8 +1,8 @@
 import { Suspense } from "react";
 import Layout from "@/components/Layout";
-import { Components } from "@/routes/routes";
+import { Components } from "@/pages/routes";
 
-export const LazyComponent = (props) => {
+const LazyComponent = (props) => {
   const { componentName } =
     props;
 
@@ -24,3 +24,5 @@ export const LazyComponent = (props) => {
     </>
   );
 };
+
+export default LazyComponent
