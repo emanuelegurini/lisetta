@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { BrowserRouter, Navigate, Routes, Route} from 'react-router';
 import PrivateRoute from './components/PrivateRoute';
 import { authRoutes } from './pages/routes';
+import { useEffect } from 'react';
 
 // TODO: creare un layer a parte
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL 
@@ -11,6 +12,8 @@ const supabaseKey = import.meta.env.VITE_SUPABASE_KEY
 export const supabase =  createClient(supabaseUrl, supabaseKey)
 
 function App() {
+
+
   return (
     <BrowserRouter>
       <Routes>

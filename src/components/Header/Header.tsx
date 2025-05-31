@@ -14,10 +14,42 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
 const Header = () => {
+  const [user, setUser] = useState< string | null>(null)
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setUser(user?.user_metadata?.username || null);
+    };
+
+    /* const updateUsername = async (newUsername) => {
+      const { data, error } = await supabase.auth.updateUser({
+        data: { username: newUsername },
+      });
+
+      if (error) {
+        console.error("Errore nell'aggiornare l'username:", error);
+        return { success: false, error };
+      }
+
+      console.log("Username aggiornato:", data.user.user_metadata.username);
+      return { success: true, user: data.user };
+    }; */
+
+    //updateUsername('nome utente')
+    getUser();
+  }, []);
+
+  useEffect(() => {
+    console.log(user)
+  }, [user])
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -52,7 +84,9 @@ const Header = () => {
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="start">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>
+              <span className="font-bold">{user ? user : 'Utente'}</span>
+            </DropdownMenuLabel>
             {/* <DropdownMenuGroup>
               <DropdownMenuItem>
                 Profile
